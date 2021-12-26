@@ -15,15 +15,45 @@ namespace tetris
 
             Random random = new Random();
             int shapeId = random.Next(1, 8);
+            int rotation = 0;
+
+            int x = 61; int y = 3;
+            int exX = x; ; int exY = y;
+            int[,] shape = drawShape(5, rotation, x, y);
 
 
-            drawShape(5, 0, 61, 3);
-            drawShape(5, 1, 68, 3);
-            drawShape(5, 2, 74, 3);
-            drawShape(5, 3, 81, 3);
+            while (true)
+            {
+                exX = x;
+                exY = y;
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey();
 
+                    while (Console.KeyAvailable)
+                    {
+                        keyInfo = Console.ReadKey();
+                    }
 
-            Console.ReadLine();
+                    switch (keyInfo.Key)
+                    {
+                        case ConsoleKey.UpArrow:
+                            rotation++;
+                            break;
+
+                        case ConsoleKey.DownArrow:
+                            y += 1;
+                            break;
+                    }
+                }
+
+                destroyShape(shape,exX,exY);
+                drawShape(shapeId, rotation, x, y);
+                shape = drawShape(shapeId, rotation, x, y);
+                Thread.Sleep(100);
+
+            }
+
         }
 
         static void drawFrame()
@@ -68,7 +98,7 @@ namespace tetris
                 Console.WriteLine();
             }
         }
-        static void drawShape(int id, int rot, int x, int y)
+        static int[,] drawShape(int id, int rot, int x, int y)
         {
             ConsoleColor color = new ConsoleColor();
             int[,] shape = new int[4, 4];
@@ -109,6 +139,7 @@ namespace tetris
                 shape = new int[,] { { 0, 0, 1 }, { 1, 1, 1 } };
             }
 
+            rot = rot % 4;
             for (int i = 0; i < rot; i++)
             {
                 shape = rotate(shape);
@@ -116,6 +147,7 @@ namespace tetris
 
             int r = shape.GetLength(0);
             int c = shape.GetLength(1);
+           
             for (int i = 0; i < r; i++)
             {
                 for (int j = 0; j < c; j++)
@@ -137,6 +169,27 @@ namespace tetris
                 y = y + 1;
             }
 
+            return shape;
+
+        }
+
+        static void destroyShape(int[,] shape, int x, int y)
+        {
+
+            for (int i = 0; i < shape.GetLength(0); i++)
+            {
+                for (int j = 0; j < shape.GetLength(1); j++)
+                {
+                    Console.SetCursorPosition(x,y);
+
+                       Console.Write("  ");
+                x = x + 2;
+
+                }
+                x = x - shape.GetLength(1) * 2;
+                y = y + 1;
+            }
+           
         }
 
         static int[,] rotate(int[,] matris)
