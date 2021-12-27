@@ -19,13 +19,15 @@ namespace tetris
 
             int x = 61; int y = 3;
             int exX = x; ; int exY = y;
-            int[,] shape = drawShape(5, rotation, x, y);
-
+            int[,] shape = drawShape(shapeId, rotation, x, y);
+            int[,] currentShape = shape;
 
             while (true)
             {
+                //currentShape 
                 exX = x;
                 exY = y;
+
                 if (Console.KeyAvailable)
                 {
                     ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -38,29 +40,62 @@ namespace tetris
                     switch (keyInfo.Key)
                     {
                         case ConsoleKey.UpArrow:
-                            rotation++;
+                            if (y + currentShape.GetLength(0) < 23)
+                            {
+                                rotation++;
+                            }
                             break;
 
                         case ConsoleKey.DownArrow:
-                            y += 1;
+                            if (y + currentShape.GetLength(0) < 23)
+                            {
+                                y += 1;
+                            }
+                            break;
+
+                        case ConsoleKey.RightArrow:
+
+                            if (x + currentShape.GetLength(1) * 2 < 82)
+                            {
+                                x += 1;
+                            }
+                            break;
+
+                        case ConsoleKey.LeftArrow:
+                            if (x != 61 )
+                            {
+                                x -= 1;
+                            }
                             break;
                     }
                 }
 
-                destroyShape(shape,exX,exY);
-                drawShape(shapeId, rotation, x, y);
-                shape = drawShape(shapeId, rotation, x, y);
-                Thread.Sleep(100);
+                if (y + currentShape.GetLength(0) < 23)
+                {
+                    y += 1;
+                }
 
+                destroyShape(currentShape,exX,exY);
+                //drawShape(shapeId, rotation, x, y);
+
+                currentShape = drawShape(shapeId, rotation, x, y);
+
+                if (y+currentShape.GetLength(0) == 23)
+                {
+                    shapeId = random.Next(1,8);
+                    x = 61; y = 3;
+                    currentShape = drawShape(shapeId, rotation, x, y);
+                }
+                Console.SetCursorPosition(0, 0);
+                Thread.Sleep(1000);
             }
-
         }
 
         static void drawFrame()
         {
             for (int y = 2; y <= 23; y++)
             {
-                for (int x = 60; x <= 81; x++)
+                for (int x = 60; x <= 82; x++)
                 {
                     Console.SetCursorPosition(x, y);
 
@@ -72,20 +107,20 @@ namespace tetris
                     {
                         Console.Write("╚");
                     }
-                    if (x == 81 && y == 2)
+                    if (x == 82 && y == 2)
                     {
                         Console.Write("╗");
                     }
-                    if (x == 81 && y == 23)
+                    if (x == 82 && y == 23)
                     {
                         Console.Write("╝");
                     }
 
-                    if ((x == 60 || x == 81) && (y > 2 && y < 23))
+                    if ((x == 60 || x == 82) && (y > 2 && y < 23))
                     {
                         Console.Write("║");
                     }
-                    else if ((y == 2 || y == 23) && (x < 81))
+                    else if ((y == 2 || y == 23) && (x < 82))
                     {
                         Console.Write("═");
                     }
@@ -168,9 +203,7 @@ namespace tetris
                 x = x - c * 2;
                 y = y + 1;
             }
-
             return shape;
-
         }
 
         static void destroyShape(int[,] shape, int x, int y)
