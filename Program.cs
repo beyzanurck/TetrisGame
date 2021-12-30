@@ -17,7 +17,7 @@ namespace tetris
             int shapeId = random.Next(1, 8);
 
             Shape shape = new Shape(shapeId);
-            int[,] currentShape = shape.shape;
+            int[,] currentShape = shape.shape;           
 
             while (true)
             {
@@ -52,14 +52,14 @@ namespace tetris
 
                             if (shape.x + shape.shape.GetLength(1) * 2 < 82)
                             {
-                                shape.x += 1;
+                                shape.x += 2;
                             }
                             break;
 
                         case ConsoleKey.LeftArrow:
                             if (shape.x != 61)
                             {
-                                shape.x -= 1;
+                                shape.x -= 2;
                             }
                             break;
                     }
