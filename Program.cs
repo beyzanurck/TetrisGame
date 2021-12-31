@@ -51,7 +51,7 @@ namespace tetris
 
                         case ConsoleKey.RightArrow:
 
-                            if (shape.x + 2 + shape.shape.GetLength(1) * 2 < 82)
+                            if (shape.x + 2 + shape.shape.GetLength(1) * 2 <=81)
                             {
                                 shape.x += 2;
                             }
@@ -90,7 +90,7 @@ namespace tetris
         {
             for (int y = 2; y <= 23; y++)
             {
-                for (int x = 60; x <= 82; x++)
+                for (int x = 60; x <= 81; x++)
                 {
                     Console.SetCursorPosition(x, y);
 
@@ -102,20 +102,20 @@ namespace tetris
                     {
                         Console.Write("╚");
                     }
-                    if (x == 82 && y == 2)
+                    if (x == 81 && y == 2)
                     {
                         Console.Write("╗");
                     }
-                    if (x == 82 && y == 23)
+                    if (x == 81 && y == 23)
                     {
                         Console.Write("╝");
                     }
 
-                    if ((x == 60 || x == 82) && (y > 2 && y < 23))
+                    if ((x == 60 || x == 81) && (y > 2 && y < 23))
                     {
                         Console.Write("║");
                     }
-                    else if ((y == 2 || y == 23) && (x < 82))
+                    else if ((y == 2 || y == 23) && (x < 81))
                     {
                         Console.Write("═");
                     }
