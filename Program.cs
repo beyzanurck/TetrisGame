@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
@@ -17,7 +18,6 @@ namespace tetris
             int shapeId = random.Next(1, 8);
 
             Shape shape = new Shape(shapeId);
-            int[,] currentShape = shape.shape;           
 
             while (true)
             {
@@ -33,9 +33,10 @@ namespace tetris
                     switch (keyInfo.Key)
                     {
                         case ConsoleKey.UpArrow:
-                            //TODO: suank, şekile değil bir defa daha döndürdükten sonraki
-                            // şeklin y+c si ile kontrol yap
-                            if (shape.y + shape.shape.GetLength(0) < 23)
+
+                            int[,] temShape = shape.rotate();
+
+                            if (temShape.GetLength(0) + shape.y < 23 && temShape.GetLength(1)*2 + shape.x < 82)
                             {
                                 shape.rotation++;
                             }
@@ -85,7 +86,6 @@ namespace tetris
                 Thread.Sleep(1000);
             }
         }
-
         static void drawFrame()
         {
             for (int y = 2; y <= 23; y++)
@@ -133,7 +133,7 @@ namespace tetris
     public class Shape
     {
         public int[,] shape;
-        public ConsoleColor color;
+        public ConsoleColor color;        
 
         public int rotation = 0; 
         int currRot = 0;
