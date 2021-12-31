@@ -51,7 +51,7 @@ namespace tetris
 
                         case ConsoleKey.RightArrow:
 
-                            if (shape.x + shape.shape.GetLength(1) * 2 < 82)
+                            if (shape.x + 2 + shape.shape.GetLength(1) * 2 < 82)
                             {
                                 shape.x += 2;
                             }
