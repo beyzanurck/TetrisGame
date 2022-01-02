@@ -20,10 +20,15 @@ namespace tetris
             Shape shape = new Shape(shapeId);
 
             List<Shape> currentShapes = new List<Shape>();
-
-            int[,] board = new int[20, 10];
+           
             while (true)
-            {       
+            {
+                int[,] board = new int[20, 10];
+                foreach (var item in currentShapes)
+                {
+                    board = item.toBoard(board);
+                }
+
                 if (Console.KeyAvailable)
                 {
                     ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -41,7 +46,13 @@ namespace tetris
 
                             if (temShape.GetLength(0) + shape.y < 23 && temShape.GetLength(1) * 2 + shape.x < 82)
                             {
+                                
                                 shape.rotation++;
+
+                                if (shape.isColliding(board, temShape))
+                                {
+                                    shape.rotation--;
+                                }
                             }
                             break;
 
@@ -49,6 +60,11 @@ namespace tetris
                             if (shape.y + shape.shape.GetLength(0) < 23)
                             {
                                 shape.y += 1;
+
+                                if (shape.isColliding(board,shape.shape))
+                                {
+                                    shape.y -= 1;
+                                }
                             }
                             break;
 
@@ -57,6 +73,11 @@ namespace tetris
                             if (shape.x + 2 + shape.shape.GetLength(1) * 2 <= 81)
                             {
                                 shape.x += 2;
+
+                                if (shape.isColliding(board, shape.shape))
+                                {
+                                    shape.x -= 2;
+                                }
                             }
                             break;
 
@@ -64,24 +85,24 @@ namespace tetris
                             if (shape.x != 61)
                             {
                                 shape.x -= 2;
+
+                                if (shape.isColliding(board, shape.shape))
+                                {
+                                    shape.x += 2;
+                                }
+
                             }
                             break;
                     }
                 }
 
-                board = new int[20, 10];
-                foreach (var item in currentShapes)
-                {
-                    board = item.toBoard(board);
-                }
-
-                bool collision = shape.isColliding(board);
+                bool collision = shape.isColliding(board, shape.shape);
                 bool nextCollision = false;
 
                 if (shape.y + shape.shape.GetLength(0) < 23 && (collision == false))
                 {
                     shape.y += 1;
-                    if (shape.isColliding(board))
+                    if (shape.isColliding(board, shape.shape))
                     {
                         nextCollision = true;
                         shape.y -= 1;
@@ -99,8 +120,8 @@ namespace tetris
                     shapeId = random.Next(1, 8);
                     shape = new Shape(shapeId);
                     shape.drawShape();
-                }                
-                
+                }
+
                 Console.SetCursorPosition(0, 0);
                 Thread.Sleep(500);
             }
@@ -166,13 +187,14 @@ namespace tetris
             {
                 for (int x = 0; x < shape.GetLength(1); x++)
                 {
-                    board[this.y - 3 + y, (this.x - 61) / 2 + x] = shape[y, x];
+                    if (shape[y, x] == 1)
+                        board[this.y - 3 + y, (this.x - 61) / 2 + x] = shape[y, x];
                 }
             }
             return board;
         }
 
-        public bool isColliding(int [,] board)
+        public bool isColliding(int [,] board, int[,] shape)
         {
             for (int y = 0; y < shape.GetLength(0); y++)
             {
