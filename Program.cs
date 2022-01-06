@@ -194,7 +194,7 @@ namespace tetris
         public int rotation = 0; 
         int currRot = 0;
 
-        public int x = 61; public int y = 3;
+        public int x = 69; public int y = 3;
         int exX = 0; int exY = 0;     
         
         public int[,] toBoard(int [,] board)
