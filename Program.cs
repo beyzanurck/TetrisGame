@@ -20,7 +20,9 @@ namespace tetris
             Shape shape = new Shape(shapeId);
 
             List<Shape> currentShapes = new List<Shape>();
-           
+            List<int> xLine = new List<int>();
+            List<int> yLine = new List<int>();
+
             while (true)
             {
                 int[,] board = new int[20, 10];
@@ -28,7 +30,7 @@ namespace tetris
                 {
                     board = item.toBoard(board);
                 }
-
+               
                 if (Console.KeyAvailable)
                 {
                     ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -122,6 +124,20 @@ namespace tetris
                     shape.drawShape();
                 }
 
+                xLine = new List<int>();
+                yLine = new List<int>();
+                bool isFull = shape.checkLine(board, xLine, yLine);
+
+                if (isFull)
+                {
+                    foreach (var item in currentShapes)
+                    {
+                        item.y++;
+                        item.destroyShape();
+                        item.drawShape();
+                    }
+                }
+
                 Console.SetCursorPosition(0, 0);
                 Thread.Sleep(500);
             }
@@ -167,7 +183,7 @@ namespace tetris
 
                 Console.WriteLine();
             }
-        }   
+        }
     }
 
     public class Shape
@@ -187,8 +203,11 @@ namespace tetris
             {
                 for (int x = 0; x < shape.GetLength(1); x++)
                 {
-                    if (shape[y, x] == 1)
-                        board[this.y - 3 + y, (this.x - 61) / 2 + x] = shape[y, x];
+                    if (this.y - 3 + y < board.GetLength(0))
+                    {
+                        if (shape[y, x] == 1)
+                            board[this.y - 3 + y, (this.x - 61) / 2 + x] = shape[y, x];
+                    }
                 }
             }
             return board;
@@ -203,6 +222,30 @@ namespace tetris
                     if (board[this.y - 3 + y, (this.x - 61) / 2 + x] == 1 && shape[y, x] == 1)
                         return true;
                 }
+            }
+            return false;
+        }
+
+        public bool checkLine(int[,] board, List<int> x, List<int> y)
+        {
+            int count = 0;
+            for (int i = 0; i < board.GetLength(0); i++)
+            {
+                for (int j = 0; j < board.GetLength(1); j++)
+                {
+                    if (board[i, j] == 1)
+                    {
+                        count++;
+                        x.Add((61 + j * 2));
+                        y.Add(3 + i);
+                    }
+
+                    if (count == 10)
+                    {
+                        return true;
+                    }
+                }
+                count = 0;
             }
             return false;
         }
@@ -266,7 +309,7 @@ namespace tetris
                 for (int j = 0; j < c; j++)
                 {
                     Console.SetCursorPosition(tx, ty);
-                    if (shape[i, j] == 1)
+                    if (shape[i, j] == 1 && ty < 23)
                     {
                         Console.ForegroundColor = color;
                         Console.Write("██");
